@@ -90,3 +90,11 @@ C:\Users\gstokes.SDCCW2K\Documents\Visual Studio 2013\Projects\ContosoUniversity
 C:\Users\gstokes.SDCCW2K\Documents\Visual Studio 2013\Projects\ContosoUniversity\ContosoUniversity\obj\Debug\ContosoUniversity.pdb
 C:\Users\gstokes.SDCCW2K\Documents\Visual Studio 2013\Projects\ContosoUniversity\ContosoUniversity\obj\Debug\ContosoUniversity.Migrations.InitialCreate.resources
 C:\Users\gstokes.SDCCW2K\Documents\Visual Studio 2013\Projects\ContosoUniversity\ContosoUniversity\obj\Debug\ContosoUniversity.csproj.GenerateResource.Cache
+C:\Users\gstokes.SDCCW2K\Documents\Visual Studio 2013\Projects\ContosoUniversity\ContosoUniversity\bin\PagedList.dll
+C:\Users\gstokes.SDCCW2K\Documents\Visual Studio 2013\Projects\ContosoUniversity\ContosoUniversity\bin\PagedList.Mvc.dll
+C:\Users\gstokes.SDCCW2K\Documents\Visual Studio 2013\Projects\ContosoUniversity\ContosoUniversity\bin\PagedList.xml
+C:\Users\gstokes.SDCCW2K\Documents\Visual Studio 2013\Projects\ContosoUniversity\ContosoUniversity\bin\PagedList.Mvc.xml
+C:\Users\gstokes.SDCCW2K\Documents\Visual Studio 2013\Projects\ContosoUniversity\ContosoUniversity\obj\Debug\ContosoUniversity.Migrations.ColumnFirstName.resources
+C:\Users\gstokes.SDCCW2K\Documents\Visual Studio 2013\Projects\ContosoUniversity\ContosoUniversity\obj\Debug\ContosoUniversity.Migrations.Chap4.resources
+C:\Users\gstokes.SDCCW2K\Documents\Visual Studio 2013\Projects\ContosoUniversity\ContosoUniversity\obj\Debug\ContosoUniversity.Migrations.department.resources
+C:\Users\gstokes.SDCCW2K\Documents\Visual Studio 2013\Projects\ContosoUniversity\ContosoUniversity\obj\Debug\ContosoUniversity.Migrations.Inheritance.resources

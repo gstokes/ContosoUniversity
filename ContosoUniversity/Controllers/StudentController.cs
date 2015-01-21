@@ -7,45 +7,66 @@ using System.Web;
 using System.Web.Mvc;
 using ContosoUniversity.Models;
 using ContosoUniversity.DAL;
+using PagedList;
 
 namespace ContosoUniversity.Controllers
 {
     public class StudentController : Controller
     {
-        private SchoolContext db = new SchoolContext();
+        private IStudentRepository _studentRepository;
+
+        public StudentController()
+        {
+            this._studentRepository = new StudentRepository(new SchoolContext());
+        }
+
+        public StudentController(IStudentRepository studentRepository)
+        {
+            this._studentRepository = studentRepository;
+        }
 
         //
         // GET: /Student/
 
-        public ActionResult Index(string sortOrder, string searchString)
+        public ViewResult Index(string sortOrder, string currentFilter, string searchString, int? page)
         {
-            ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "Name_desc" : "";
-            ViewBag.DateSortParm = sortOrder == "Date" ? "Date_desc" : "Date";
-            var students = from s in db.Students
-                           select s;
+            ViewBag.CurrentSort = sortOrder;
+            ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
 
-            //Search string
+            if (searchString != null) {
+                page = 1;
+            }
+            else {
+                searchString = currentFilter;
+            }
+
+            ViewBag.CurrentFilter = searchString;
+
+            var students = from s in _studentRepository.GetStudents()
+                           select s;
             if (!String.IsNullOrEmpty(searchString)) {
                 students = students.Where(s => s.LastName.ToUpper().Contains(searchString.ToUpper())
                                        || s.FirstMidName.ToUpper().Contains(searchString.ToUpper()));
             }
-
-            //Order
             switch (sortOrder) {
-                case "Name_desc":
+                case "name_desc":
                     students = students.OrderByDescending(s => s.LastName);
                     break;
                 case "Date":
                     students = students.OrderBy(s => s.EnrollmentDate);
                     break;
-                case "Date_desc":
+                case "date_desc":
                     students = students.OrderByDescending(s => s.EnrollmentDate);
                     break;
-                default:
+                default:  // Name ascending 
                     students = students.OrderBy(s => s.LastName);
                     break;
             }
-            return View(students.ToList());
+
+            int pageSize = 3;
+            int pageNumber = (page ?? 1);
+            return View(students.ToPagedList(pageNumber, pageSize));
         }
 
         //
@@ -53,7 +74,7 @@ namespace ContosoUniversity.Controllers
 
         public ActionResult Details(int id = 0)
         {
-            Student student = db.Students.Find(id);
+            Student student = _studentRepository.GetStudentByID(id);
             if (student == null)
             {
                 return HttpNotFound();
@@ -80,8 +101,8 @@ namespace ContosoUniversity.Controllers
         {
             try {
                 if (ModelState.IsValid) {
-                    db.Students.Add(student);
-                    db.SaveChanges();
+                    _studentRepository.InsertStudent(student);
+                    _studentRepository.Save();
                     return RedirectToAction("Index");
                 }
             }
@@ -97,7 +118,7 @@ namespace ContosoUniversity.Controllers
 
         public ActionResult Edit(int id = 0)
         {
-            Student student = db.Students.Find(id);
+            Student student = _studentRepository.GetStudentByID(id);
             if (student == null)
             {
                 return HttpNotFound();
@@ -110,12 +131,12 @@ namespace ContosoUniversity.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "StudentID, LastName, FirstMidName, EnrollmentDate")] Student student)
+        public ActionResult Edit([Bind(Include = "PersonID, LastName, FirstMidName, EnrollmentDate")] Student student)
         {
             try {
                 if (ModelState.IsValid) {
-                    db.Entry(student).State = EntityState.Modified;
-                    db.SaveChanges();
+                    _studentRepository.UpdateStudent(student);
+                    _studentRepository.Save();
                     return RedirectToAction("Index");
                 }
             }
@@ -134,7 +155,7 @@ namespace ContosoUniversity.Controllers
             if (saveChangesError.GetValueOrDefault()) {
                 ViewBag.ErrorMessage = "Delete failed. Try again, and if the problem persists see your system administrator.";
             }
-            Student student = db.Students.Find(id);
+            Student student = _studentRepository.GetStudentByID(id);
             if (student == null) {
                 return HttpNotFound();
             }
@@ -149,9 +170,9 @@ namespace ContosoUniversity.Controllers
         public ActionResult Delete(int id)
         {
             try {
-                Student student = db.Students.Find(id);
-                db.Students.Remove(student);
-                db.SaveChanges();
+                Student student = _studentRepository.GetStudentByID(id);
+                _studentRepository.DeleteStudent(id);
+                _studentRepository.Save();
             }
             catch (DataException/* dex */) {
                 // uncomment dex and log error. 
@@ -162,7 +183,7 @@ namespace ContosoUniversity.Controllers
 
         protected override void Dispose(bool disposing)
         {
-            db.Dispose();
+            _studentRepository.Dispose();
             base.Dispose(disposing);
         }
     }
